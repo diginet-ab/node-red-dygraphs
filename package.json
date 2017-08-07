@@ -1,6 +1,6 @@
 {
   "name": "node-red-dygraphs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Graphs for node-red's dashboard UI using dygraphs",
   "main": "index.js",
   "scripts": {
