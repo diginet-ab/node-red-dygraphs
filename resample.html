@@ -1,0 +1,39 @@
+<script type="text/javascript">
+    RED.nodes.registerType('resample', {
+        // node definition
+        category: 'dygraphs',
+        defaults: {
+            name: {value: ''},
+            group: {type: 'dygraphs', required: true},
+        },
+        inputs: 1,
+        outputs: 1,
+        color: 'rgb(255,204,102)',
+        paletteLabel: 'resample',
+        label: function() {
+            return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'resample'; },
+        //inputLabels: (string|function) optional label to add on hover to the input port of a node.
+        //outputLabels: (string|function) optional labels to add on hover to the output ports of a node.
+        icon: 'function.png',
+        align: 'right',
+    });
+</script>
+
+<script type="text/x-red" data-template-name="resample">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-tips"><b>Tip:</b> This is here to help.</div>
+</script>
+
+<script type="text/x-red" data-help-name="node-type">
+    <p>Graphs for node-red's dashboard UI using dygraphs.</p>
+    <h3>Output</h3>
+    <dl class="message-properties">
+    <dt>payload
+        <span class="property-type">string | buffer</span>
+    </dt>
+    <h3>Details</h3>
+    <p>Some more information about the node.</p>
+</script>

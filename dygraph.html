@@ -1,0 +1,173 @@
+<style>
+    input.series-color {
+        width: 100px;
+        text-align: center;
+    }
+    input.series-color::-webkit-color-swatch {
+        border: none;
+    }
+</style>
+
+<script type="text/javascript">
+    RED.nodes.registerType('dygraph',{
+        category: 'dygraphs',
+        color: 'rgb(255,204,102)',
+        defaults: {
+            name: {value: ''},
+            title: {value: ''},
+			xlabel: {value: ''},
+			ylabel: {value: ''},
+            legend: {value: 'false'},
+            nodata: {value: 'no data'},
+            dot: {value: false},
+            ymin: {value: '', validate:function(value) { return value === '' || RED.validators.number(); }},
+            ymax: {value: '', validate:function(value) { return value === '' || RED.validators.number(); }},
+            //removeOlder: {value: 1, validate:RED.validators.number(), required:true},
+            //removeOlderPoints: {value: '', validate:function(value) { return value === '' || RED.validators.number(); }},
+            //removeOlderUnit: {value: '3600', required:true},
+            colors: {value: ['#1F77B4', '#AEC7E8', '#FF7F0E', '#2CA02C', '#98DF8A', '#D62728', '#FF9896', '#9467BD', '#C5B0D5']},
+        },
+        inputs:1,
+        outputs:1,
+        outputLabels: ["connect to UI template node"],
+        icon: "dygraph.png",
+        //align: "right",
+        //paletteLabel: 'dygraph',
+        label: function() {
+            return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'dygraph'; },
+        oneditprepare: function() {
+            var setColour = function(id, value) {
+                $(id).val(value);
+                $(id).css("background-color", value);
+                var rgb = tinycolor(value).toRgb();
+                var level = ((rgb.r*299) + (rgb.g*587) + (rgb.b*114))/1000;
+                var textColor = (level >= 128) ? '#111111' : '#eeeeee';
+                $(id).css("color", textColor);
+            }
+            $(".series-color").change(function() {
+                setColour("#"+$(this).attr("id"), $(this).val());
+            });
+            var defaultColors = ['#1F77B4', '#AEC7E8', '#FF7F0E', '#2CA02C', '#98DF8A', '#D62728', '#FF9896', '#9467BD', '#C5B0D5'];
+            if (this.colors) {
+                for (var i=0; i<this.colors.length; i++) {
+                    var value = this.colors[i] || defaultColors[i];
+                    setColour("#node-input-color"+(i+1), value);
+                }
+            }
+            else {
+                for (var c=0; c<defaultColors.length; c++) {
+                    setColour("#node-input-color"+(c+1), defaultColors[c]);
+                }
+            }
+        },
+        oneditsave: function() {
+            this.colors = [$("#node-input-color1").val(),$("#node-input-color2").val(),$("#node-input-color3").val(),
+            $("#node-input-color4").val(),$("#node-input-color5").val(),$("#node-input-color6").val(),
+            $("#node-input-color7").val(),$("#node-input-color8").val(),$("#node-input-color9").val()];
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="dygraph">
+    <div class="form-row">
+        <label for="node-input-title"><i class="fa fa-i-cursor"></i> Title</label>
+        <input type="text" id="node-input-title" placeholder="optional chart title">
+    </div>
+    <!-- div class="form-row" id="x-axis-show">
+        <label for="node-input-removeOlder">X-axis</label>
+        <label for="node-input-removeOlder" style="width: auto">last</label>
+        <input type="text" id="node-input-removeOlder" style="width:50px;">
+        <select id="node-input-removeOlderUnit" style="width:80px;">
+            <option value="1">seconds</option>
+            <option value="60">minutes</option>
+            <option value="3600">hours</option>
+            <option value="86400">days</option>
+            <option value="604800">weeks</option>
+        </select>
+        <label for="node-input-removeOlderPoints" style="width: auto; margin-left: 10px; margin-right: 10px;">OR</label>
+        <input type="text" id="node-input-removeOlderPoints" style="width:60px;" placeholder="1000">
+        <span style="margin-left: 5px;">points</span>
+    </div-->
+    <div class="form-row" id="x-axis-label-show">
+        <label for="node-input-xformat">X-axis label</label>
+        <input type="text" id="node-input-xlabel" placeholder="optional X axis label">
+    </div>
+    <div class="form-row" id="y-axis-show">
+        <label id="y-label-show" for="node-input-ymin">Y-axis</label>
+        <label for="node-input-ymin" style="width:auto">min</label>
+        <input type="text" id="node-input-ymin" style="width:80px">
+        <label for="not-input-ymax" style="width:auto; margin-left: 20px;">max</label>
+        <input type="text" id="node-input-ymax" style="width:80px">
+    </div>
+    <div class="form-row" id="y-axis-label-show">
+        <label for="node-input-yformat">Y-axis label</label>
+        <input type="text" id="node-input-ylabel" placeholder="optional Y axis label">
+    </div>
+    <!-- div class="form-row" id="legend-show">
+        <label for="node-input-legend">Legend</label>
+        <select id="node-input-legend" style="width:120px;">
+            <option value="false">None</option>
+            <option value="true">Show</option>
+        </select>
+        <span id="interpolate-show">&nbsp;&nbsp;&nbsp;&nbsp;Interpolate
+            <select id="node-input-interpolate" style="width:120px;">
+                <option value="linear">linear</option>
+                <option value="step">step</option>
+                <option value="bezier">bezier</option>
+            </select>
+        </span>
+    </div -->
+    <div class="form-row">
+        <div id="show-dot-field" style="display:inline-block;">
+            <input type="checkbox" id="node-input-dot" style="display:inline-block; width:auto; vertical-align:baseline; margin-left:40px; margin-right:5px;">draw points
+        </div>
+    </div>
+    <div class="form-row" id="ui-chart-colours">
+        <label for="node-input-color1">Series Colours</label>
+        <input type="color" id="node-input-color1" class="series-color"/>
+        <input type="color" id="node-input-color2" class="series-color"/>
+        <input type="color" id="node-input-color3" class="series-color"/>
+        <div style="margin-top: 5px; margin-left: 104px;">
+            <input type="color" id="node-input-color4" class="series-color"/>
+            <input type="color" id="node-input-color5" class="series-color"/>
+            <input type="color" id="node-input-color6" class="series-color"/>
+        </div>
+        <div style="margin-top: 5px; margin-left: 104px;">
+            <input type="color" id="node-input-color7" class="series-color"/>
+            <input type="color" id="node-input-color8" class="series-color"/>
+            <input type="color" id="node-input-color9" class="series-color"/>
+        </div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-nodata">Blank label</label>
+        <input type="text" id="node-input-nodata"
+            placeholder="display this text before valid data arrives">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="dygraph">
+    <p>Plots the input values on a line graph implemented by
+    <a href="http://dygraphs.com">dygraphs</a>.
+    <p>Each input <code>msg</code> may contain the following fields:
+    <ul>
+    <li>msg.at: timestamp of data point in milliseconds since the epoch,
+        if omitted the current time is used.</li>
+    <li>msg.payload: the numerical value to plot, i.e. Y value (required).</li>
+    <li>msg.topic: the name of the series, "series 1" if omitted.</li>
+    <li>msg.options: an object of dygraphs options.</li>
+    </ul>
+    <p>Minimum and Maximum <b>Y</b> axis values are optional. The graph will auto-scale to any
+        values received.</p>
+    <p>Multiple lines can be shown on the same chart by using a different <code>msg.topic</code>
+    value on each input message.</p>
+    <p>The <b>X</b> axis defines a time window or a maximum number of points to display. Older data will be automatically removed from the graph.
+    <p>Inputting a `msg.payload` containing a blank array `[]` will clear the chart.</p>
+    <p>The <b>Blank label</b> field can be used to display some text before any valid data is
+        received.</p>
+    <p>The node output contains an array of the graph state that can be persisted if needed.
+        This can be passed into the graph node to display the persisted data.</p>
+</script>
