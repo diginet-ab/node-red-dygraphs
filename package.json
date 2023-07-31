@@ -1,5 +1,5 @@
 {
-  "name": "node-red-dygraphs",
+  "name": "@diginet/node-red-dygraphs",
   "version": "0.0.2",
   "description": "Graphs for node-red's dashboard UI using dygraphs",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tve/node-red-dygraphs.git"
+    "url": "git+https://github.com/diginet-ab/node-red-dygraphs.git"
   },
   "keywords": [
     "node-red"
@@ -16,9 +16,9 @@
   "author": "Thorsten von Eicken",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/tve/node-red-dygraphs/issues"
+    "url": "https://github.com/diginet-ab/node-red-dygraphs/issues"
   },
-  "homepage": "https://github.com/tve/node-red-dygraphs#readme",
+  "homepage": "https://github.com/diginet-ab/node-red-dygraphs#readme",
   "node-red" : {
         "nodes": {
             "dygraph": "dygraph.js"
